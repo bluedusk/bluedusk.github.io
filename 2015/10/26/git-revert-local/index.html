@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="python," />
+  <meta name="keywords" content="Git," />
 
 
 
@@ -45,7 +45,7 @@
 
 
 
-  <title> 使用crontab定时运行python脚本ImportError错误.md // Scv Ready to Go! </title>
+  <title> Git放弃本地修改 // Scv Ready to Go! </title>
 </head>
 
 <body>
@@ -148,7 +148,7 @@
           
           
             
-              使用crontab定时运行python脚本ImportError错误.md
+              Git放弃本地修改
             
           
         </h1>
@@ -156,7 +156,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-07-28
+          发表于 2015-10-26
         </span>
 
         
@@ -173,21 +173,31 @@
       
 
       
-        <p>记录下crontab运行python脚本报错ImportError的解决。</p>
+        <h3 id="撤销单个文件修改：">撤销单个文件修改：</h3><p>git checkout — <file></file></p>
+<h3 id="撤销多个文件(以下几个都可以)：">撤销多个文件(以下几个都可以)：</h3><p>git checkout .<br>git checkout — .<br>git checkout -f</p>
+<h3 id="删除本地新增">删除本地新增</h3><p>但是git checkout不能删除新增的文件，这时候需要：</p>
+<p>git clean -xdf</p>
 <a id="more"></a>
-<p>用python写了个操作MongoDB的脚本，用crontab做定时任务。脚本如下：</p>
-<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">*</span>/1 <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> python ~/MyWork/mongo.py</span><br></pre></td></tr></table></figure>
-<p>默认情况下，运行情况会发mail，使用mail命令输入对应的mail号码查看。如果想输出到文件可以：</p>
-<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">*</span>/1 <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> python ~/MyWork/mongo.py  &gt;&gt; ~/hi.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<p>以上crontab运行后报错，提示为找不到pymongo包：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="constant">ImportError</span><span class="symbol">:</span> <span class="constant">No</span> <span class="class"><span class="keyword">module</span> <span class="title">named</span> <span class="title">pymongo</span></span></span><br></pre></td></tr></table></figure>
-<p>但是命令行明明可以运行：</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$~</span>  python ~<span class="regexp">/MyWork/mongo</span>.py</span><br></pre></td></tr></table></figure>
-<p>查了一些资料后发现可能是python多版本的问题，crontab用到的默认版本没有安装pymongo. 那么就排查下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">python</span><br><span class="line"><span class="comment">#显示为python2.7.10是应该使用的默认版本</span></span><br><span class="line"></span><br><span class="line">/usr/bin/pytohn</span><br><span class="line">/usr/bin/pytohn2.7</span><br><span class="line"><span class="comment">#以上两个都显示为python2.7.6</span></span><br><span class="line"></span><br><span class="line">which python</span><br><span class="line"><span class="comment">#找到PATH中python用的是哪个</span></span><br><span class="line"><span class="comment">#输出为</span></span><br><span class="line">/usr/local/bin/python</span><br></pre></td></tr></table></figure>
-<p>那么问题就找到了， crontab调用了/usr/bin/python，导致ImportError，解决方法是在crontab中加入路径信息：</p>
-<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">*</span>/1 <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span>/usr/local/bin/python ~/MyWork/mongo.py  &gt;&gt; ~/hi.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<p>OK， 可以正常运行了。</p>
+<h3 id="其他相关命令">其他相关命令</h3><ul>
+<li><p>取消对文件的修改。还原到最近的版本，废弃本地做的修改。<br>git checkout — <file></file></p>
+</li>
+<li><p>取消已经暂存的文件。即，撤销先前”git add”的操作<br>git reset HEAD <file>…</file></p>
+</li>
+<li><p>修改最后一次提交。用于修改上一次的提交信息，或漏提交文件等情况。<br>git commit —amend</p>
+</li>
+<li><p>回退所有内容到上一个版本<br>git reset HEAD^</p>
+</li>
+<li><p>回退a.py这个文件的版本到上一个版本<br>git reset HEAD^ a.py  </p>
+</li>
+<li><p>向前回退到第3个版本<br>git reset –soft HEAD~3  </p>
+</li>
+<li><p>将本地的状态回退到和远程的一样<br>git reset –hard origin/master  </p>
+</li>
+<li><p>回退到某个版本<br>git reset 057d  </p>
+</li>
+<li><p>回退到上一次提交的状态，按照某一次的commit完全反向的进行一次commit.(代码回滚到上个版本，并提交git)<br>git revert HEAD</p>
+</li>
+</ul>
 
       
     </div>
@@ -196,7 +206,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/python/"> #python </a>
+            <a href="/tags/Git/"> #Git </a>
           
         </div>
       
@@ -205,13 +215,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/10/26/git-revert-local/">Git放弃本地修改</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/05/27/Angular的factory-service-provider/">Angular的factory/service/provider</a>
+              <a href="/2015/07/28/crontab-python-importerror/">使用crontab定时运行python脚本ImportError错误.md</a>
             
           </div>
         </div>
@@ -317,7 +325,7 @@
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#撤销单个文件修改："><span class="nav-number">1.</span> <span class="nav-text">撤销单个文件修改：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#撤销多个文件(以下几个都可以)："><span class="nav-number">2.</span> <span class="nav-text">撤销多个文件(以下几个都可以)：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除本地新增"><span class="nav-number">3.</span> <span class="nav-text">删除本地新增</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他相关命令"><span class="nav-number">4.</span> <span class="nav-text">其他相关命令</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
